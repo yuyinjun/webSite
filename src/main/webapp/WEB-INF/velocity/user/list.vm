@@ -1,0 +1,13 @@
+#set($page_title="Layout Test")
+<h2>List of Feeds</h2>
+<ul>
+
+    #foreach($user in $pager.list)
+        <li><a href="user/${user.userId}">${user.email}</a></li>
+    #end
+</ul>
+
+#pager("/userList", $!pager)
+
+
+

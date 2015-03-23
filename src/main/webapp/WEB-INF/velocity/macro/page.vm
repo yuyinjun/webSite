@@ -1,0 +1,44 @@
+#macro(pager $url $pager)
+<ul class="pagination">
+ #set($FRONT_LEN = 4)
+ #set($BEHIND_LEN = 5)
+ #set($PAGER_LEN = 10)
+ #set($PAGER_CENTER = $!{pager.pages} - $!{BEHIND_LEN})
+ <li #if($!{pager.pageNum} == 1) class="disabled"#end>
+  <a href="$!{url}?page=1">«</a>
+ </li>
+ #if($!{pager.pages} <= $!{PAGER_LEN})
+  #foreach($p in [1..$!{pager.pages}])
+   <li #if($!{pager.pageNum} == $!{p}) class="active" #end>
+    <a href="$!{url}?page=$!{p}">$!{p}</a>
+   </li>
+  #end
+ #elseif($!{pager.pages} > $!{PAGER_LEN})
+  #if($!{pager.pageNum} <= $!{FRONT_LEN})
+   #foreach($p in [1..10])
+    <li #if($!{pager.pageNum} == $!{p}) class="active" #end>
+     <a href="$!{url}?page=$!{p}">$!{p}</a>
+    </li>
+   #end
+  #elseif($!{pager.pageNum} < $!{PAGER_CENTER})
+   #set($header = $!{pager.pageNum} - $!{FRONT_LEN})
+   #set($ender = $!{pager.pageNum} + $!{BEHIND_LEN})
+   #foreach($p in [$!{header}..$!{ender}])
+    <li #if($!{pager.pageNum} == $!{p}) class="active" #end>
+     <a href="$!{url}?page=$!{p}">$!{p}</a>
+    </li>
+   #end
+  #else
+   #set($begin = $!{pager.pages} - $!{FRONT_LEN} - $!{BEHIND_LEN})
+   #foreach($p in [$!{begin}..$!{pager.pages}])
+    <li #if($!{pager.pageNum} == $!{p}) class="active" #end>
+     <a href="$!{url}?page=$!{p}">$!{p}</a>
+    </li>
+   #end
+  #end
+ #end
+ <li #if($!{pager.pageNum} == $!{pager.pages}) class="disabled"#end>
+  <a href="$!{url}?page=$!{pager.pages}">»</a>
+ </li>
+</ul>
+#end

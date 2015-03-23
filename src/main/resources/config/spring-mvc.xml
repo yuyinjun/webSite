@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+http://www.springframework.org/schema/mvc 
+http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 -->
+	<context:component-scan base-package="com.lm" />
+	<mvc:annotation-driven/>
+
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" /><!-- json转换器 -->
+			</list>
+		</property>
+	</bean>
+
+	
+	
+	
+	<!-- 配置velocity引擎 -->
+	<bean id="velocityConfigurer"
+		class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/velocity/" /><!-- 模板存放的路径 -->
+		<property name="configLocation" value="classpath:velocity/velocity.properties" />
+	</bean>
+
+	<!-- 配置视图的显示 -->
+	<bean id="ViewResolver"
+		class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+		<property name="prefix" value="/" /><!-- 视图文件的前缀，即存放的路径 -->
+		<property name="suffix" value=".vm" /><!-- 视图文件的后缀名 -->
+		<property name="toolboxConfigLocation" value="/WEB-INF/velocity-tools.xml" /><!--toolbox配置文件路径 -->
+		<property name="dateToolAttribute" value="date" /><!--日期函数名称 -->
+		<property name="numberToolAttribute" value="number" /><!--数字函数名称 -->
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="exposeSpringMacroHelpers" value="true" /><!--是否使用spring对宏定义的支持 -->
+		<property name="exposeRequestAttributes" value="true" /><!--是否开放request属性 -->
+		<property name="requestContextAttribute" value="rc" /><!--request属性引用名称 -->
+		<!--指定默认layout文件-->
+        <property name="layoutUrl" value="layout/default.vm"/>
+	</bean>
+	
+	
+	
+	
+	
+	<!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+		p:prefix="/WEB-INF/view/" p:suffix=".jsp" /> -->
+
+	<!-- <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		<property name="defaultEncoding"> <value>UTF-8</value> </property> <property 
+		name="maxUploadSize"> <value>32505856</value>上传文件大小限制为31M，31*1024*1024 </property> 
+		<property name="maxInMemorySize"> <value>4096</value> </property> </bean> -->
+
+	<mvc:resources mapping="/assets/**" location="/assets/"></mvc:resources>
+	<mvc:view-controller path="/" view-name="/index/index"/>  
+	
+	
+	
+ 
+         <!-- 国际化配置 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		 <property name="cacheSeconds" value="3000" /> 
+		 <property name="useCodeAsDefaultMessage" value="true" />  
+		<property name="basename" value="classpath:i18n/info" />
+	</bean>
+ 
+ <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+   <property name="defaultLocale" value="zh_CN"></property>
+ </bean>
+ 
+<mvc:interceptors>  
+    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />  
+</mvc:interceptors> 
+	
+	
+</beans>
